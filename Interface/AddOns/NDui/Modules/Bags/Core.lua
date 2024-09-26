@@ -954,7 +954,7 @@ function module:OnLogin()
 		AddNewContainer("Bag", 16, "BagQuest", filters.bagQuest)
 		AddNewContainer("Bag", 13, "BagAnima", filters.bagAnima)
 		AddNewContainer("Bag", 14, "BagStone", filters.bagStone)
-		AddNewContainer("Bag", 19, "bagOldEquipment", filters.bagOldEquipment)
+		AddNewContainer("Bag", 18, "bagOldEquipment", filters.bagOldEquipment)
 
 		f.main = MyContainer:New("Bag", {Bags = "bags", BagType = "Bag"})
 		f.main.__anchor = {"BOTTOMRIGHT", -50, 100}
