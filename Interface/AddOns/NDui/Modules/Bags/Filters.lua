@@ -71,7 +71,37 @@ end
 local function isItemEquipment(item)
 	if not C.db["Bags"]["ItemFilter"] then return end
 	if not C.db["Bags"]["FilterEquipment"] then return end
-	return item.link and item.quality > Enum.ItemQuality.Common and module:IsItemHasLevel(item)
+	if item.bagId ~= -1 and module:IsItemHasLevel(item) then
+		local ilvl = B.GetItemLevel(item.link, item.bagId ~= -1 and item.bagId, item.slotId)
+	if ilvl ~= nil then
+		if C.db["Bags"]["FilterOldEquipment"] == true then
+				if ilvl > C.db["Bags"]["EquipmentThreshold"] then
+					return item.link and item.quality > Enum.ItemQuality.Common and module:IsItemHasLevel(item)
+				end
+			else
+				return item.link and item.quality > Enum.ItemQuality.Common and module:IsItemHasLevel(item)
+			end
+		end
+	return
+	end
+end
+
+local function isOldItemEquipment(item)
+	if not C.db["Bags"]["ItemFilter"] then return end
+	if not C.db["Bags"]["FilterOldEquipment"] then return end
+	if item.bagId ~= -1 and module:IsItemHasLevel(item) then
+		local ilvl = B.GetItemLevel(item.link, item.bagId ~= -1 and item.bagId, item.slotId)
+	if ilvl ~= nil then
+		if C.db["Bags"]["FilterOldEquipment"] == true then
+				if ilvl < C.db["Bags"]["EquipmentThreshold"] then
+					return item.link and item.quality > Enum.ItemQuality.Common and module:IsItemHasLevel(item)
+				end
+			else
+				return
+			end
+		end
+	return
+	end
 end
 
 local consumableIDs = {
@@ -212,6 +242,7 @@ function module:GetFilters()
 	filters.bagRelic = function(item) return isItemInBag(item) and isKorthiaRelic(item) end
 	filters.bagStone = function(item) return isItemInBag(item) and isPrimordialStone(item) end
 	filters.bagAOE = function(item) return isItemInBag(item) and isWarboundUntilEquipped(item) end
+	filters.bagOldEquipment = function(item) return isItemInBag(item) and isOldItemEquipment(item) end
 
 	filters.onlyBank = function(item) return isItemInBank(item) and not isEmptySlot(item) end
 	filters.bankAzeriteItem = function(item) return isItemInBank(item) and isAzeriteArmor(item) end

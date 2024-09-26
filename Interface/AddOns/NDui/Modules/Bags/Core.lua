@@ -955,6 +955,7 @@ function module:OnLogin()
 		AddNewContainer("Bag", 13, "BagAnima", filters.bagAnima)
 		AddNewContainer("Bag", 14, "BagRelic", filters.bagRelic)
 		AddNewContainer("Bag", 15, "BagStone", filters.bagStone)
+		AddNewContainer("Bag", 19, "bagOldEquipment", filters.bagOldEquipment)
 
 		f.main = MyContainer:New("Bag", {Bags = "bags", BagType = "Bag"})
 		f.main.__anchor = {"BOTTOMRIGHT", -50, 100}
@@ -1305,7 +1306,7 @@ function module:OnLogin()
 		local label
 		if strmatch(name, "AzeriteItem$") then
 			label = L["Azerite Armor"]
-		elseif strmatch(name, "Equipment$") then
+		elseif strmatch(name, "Equipment") then
 			label = BAG_FILTER_EQUIPMENT
 		elseif strmatch(name, "EquipSet$") then
 			label = L["Equipement Set"]
@@ -1333,6 +1334,8 @@ function module:OnLogin()
 			label = C_Spell.GetSpellName(404861)
 		elseif strmatch(name, "AOE") then
 			label = ITEM_ACCOUNTBOUND_UNTIL_EQUIP
+		elseif strmatch(name, "bagOldEquipment") then
+			label = "Old Equipment"
 		end
 		if label then
 			self.label = B.CreateFS(self, 14, label, true, "TOPLEFT", 5, -8)
