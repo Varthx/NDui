@@ -943,18 +943,17 @@ function module:OnLogin()
 			AddNewContainer("Bag", i, "BagCustom"..i, filters["bagCustom"..i])
 		end
 		AddNewContainer("Bag", 6, "BagReagent", filters.onlyBagReagent)
-		AddNewContainer("Bag", 18, "Junk", filters.bagsJunk)
+		AddNewContainer("Bag", 17, "Junk", filters.bagsJunk)
 		AddNewContainer("Bag", 9, "EquipSet", filters.bagEquipSet)
 		AddNewContainer("Bag", 10, "BagAOE", filters.bagAOE)
 		AddNewContainer("Bag", 7, "AzeriteItem", filters.bagAzeriteItem)
 		AddNewContainer("Bag", 8, "Equipment", filters.bagEquipment)
 		AddNewContainer("Bag", 11, "BagCollection", filters.bagCollection)
-		AddNewContainer("Bag", 16, "Consumable", filters.bagConsumable)
+		AddNewContainer("Bag", 15, "Consumable", filters.bagConsumable)
 		AddNewContainer("Bag", 12, "BagGoods", filters.bagGoods)
-		AddNewContainer("Bag", 17, "BagQuest", filters.bagQuest)
+		AddNewContainer("Bag", 16, "BagQuest", filters.bagQuest)
 		AddNewContainer("Bag", 13, "BagAnima", filters.bagAnima)
-		AddNewContainer("Bag", 14, "BagRelic", filters.bagRelic)
-		AddNewContainer("Bag", 15, "BagStone", filters.bagStone)
+		AddNewContainer("Bag", 14, "BagStone", filters.bagStone)
 		AddNewContainer("Bag", 19, "bagOldEquipment", filters.bagOldEquipment)
 
 		f.main = MyContainer:New("Bag", {Bags = "bags", BagType = "Bag"})
@@ -1324,8 +1323,6 @@ function module:OnLogin()
 			label = QUESTS_LABEL
 		elseif strmatch(name, "Anima") then
 			label = POWER_TYPE_ANIMA
-		elseif name == "BagRelic" then
-			label = L["KorthiaRelic"]
 		elseif strmatch(name, "Custom%d") then
 			label = GetCustomGroupTitle(settings.Index)
 		elseif name == "BagReagent" then
@@ -1492,16 +1489,19 @@ function module:OnLogin()
 	SetCVar("professionToolSlotsExampleShown", 1)
 	SetCVar("professionAccessorySlotsExampleShown", 1)
 
-	-- Shift key alert
-	local function onUpdate(self, elapsed)
-		if IsShiftKeyDown() then
-			self.elapsed = (self.elapsed or 0) + elapsed
-			if self.elapsed > 5 then
-				UIErrorsFrame:AddMessage(DB.InfoColor..L["StupidShiftKey"])
-				self.elapsed = 0
-			end
+	-- Delay updates for data jam
+	local updater = CreateFrame("Frame", nil, f.main)
+	updater:Hide()
+	updater:SetScript("OnUpdate", function(self, elapsed)
+		self.delay = self.delay - elapsed
+		if self.delay < 0 then
+			module:UpdateAllBags()
+			self:Hide()
 		end
-	end
-	local shiftUpdater = CreateFrame("Frame", nil, f.main)
-	shiftUpdater:SetScript("OnUpdate", onUpdate)
+	end)
+
+	B:RegisterEvent("GET_ITEM_INFO_RECEIVED", function()
+		updater.delay = 1.5
+		updater:Show()
+	end)
 end
